@@ -5,7 +5,7 @@
   <title>Rewards Pro</title>
   <meta charset="UTF-8">
   <meta name="referrer" content="no-referrer">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f766e">
   <!-- CSP: restrict where the app can load code from and talk to.
@@ -93,95 +93,94 @@
             <button class="sidebartoggle desktop-only" aria-label="Toggle sidebar">
               <span class="toggleicon"><i class="fa-solid fa-outdent"></i></span>
             </button>
-            <a href="https://rewards.bing.com/" class="btn-ghost" target="_blank" rel="noopener noreferrer">Website</a>
-            <button class="btn-icon-toggle" data-theme-toggle type="button" title="Toggle theme"
-              aria-label="Toggle theme">
-              <span class="icon-light">☀️</span>
-              <span class="icon-dark">🌙</span>
-            </button>
-            <button class="btn-ghost" id="login-nav-btn">
-              <span class="btn-ghost desktop-only">🔒 Cloud Login</span>
-              <span class="mobile-only"><i class="fa-solid fa-user"></i></span>
-            </button>
-            <button class="btn-ghost mobile-only" data-view="settings" type="button"
-              onclick="window.switchDashboardView('settings')" title="Settings">
-              <i class="fa-solid fa-cog"></i>
-            </button>
+            <div class="page-heading">
+              <h2 id="page-title">Overview</h2>
+              <span class="page-sub" id="page-sub">Today at a glance</span>
+            </div>
           </div>
 
-          <!-- User profile menu: avatar trigger + dropdown (shown when logged in) -->
-          <div id="user-bar" class="user-menu hidden">
-            <button id="user-menu-btn" class="user-menu-trigger" type="button" aria-haspopup="menu"
-              aria-expanded="false" title="Account menu">
-              <span class="avatar" id="user-initials">U</span>
-              <span id="sync-dot" class="sync-dot" title="Sync status"></span>
+          <div class="header-actions">
+            <a href="https://rewards.bing.com/" class="icon-btn" target="_blank" rel="noopener noreferrer"
+              title="Open Bing Rewards" aria-label="Open Bing Rewards">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+            <button class="icon-btn" data-theme-toggle type="button" title="Toggle theme" aria-label="Toggle theme">
+              <i class="icon-light fa-solid fa-sun"></i>
+              <i class="icon-dark fa-solid fa-moon"></i>
             </button>
-            <div id="user-menu-dropdown" class="user-menu-dropdown" hidden>
-              <div class="profile-details">
-                <span class="user-email" id="user-email-display">user@example.com</span>
-                <span class="sync-status">Cloud Sync Active</span>
+            <button class="icon-btn mobile-only" data-view="settings" type="button"
+              onclick="window.switchDashboardView('settings')" title="Settings" aria-label="Settings">
+              <i class="fa-solid fa-gear"></i>
+            </button>
+            <button class="btn-secondary btn-sm login-btn" id="login-nav-btn" type="button">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span class="desktop-only">Cloud Login</span>
+            </button>
+
+            <!-- User profile menu: avatar trigger + dropdown (shown when logged in) -->
+            <div id="user-bar" class="user-menu hidden">
+              <button id="user-menu-btn" class="user-menu-trigger" type="button" aria-haspopup="menu"
+                aria-expanded="false" title="Account menu">
+                <span class="avatar" id="user-initials">U</span>
+                <span id="sync-dot" class="sync-dot" title="Sync status"></span>
+              </button>
+              <div id="user-menu-dropdown" class="user-menu-dropdown" hidden>
+                <div class="profile-details">
+                  <span class="user-email" id="user-email-display">user@example.com</span>
+                  <span class="sync-status">Cloud Sync Active</span>
+                </div>
+                <button class="btn-secondary btn-sm" id="menu-sync-now-btn" type="button"><i
+                    class="fa-solid fa-rotate"></i> Sync Now</button>
+                <button class="btn-secondary btn-sm" id="logout-btn" type="button"><i
+                    class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
               </div>
-              <button class="btn-secondary btn-sm" id="menu-sync-now-btn" type="button">🔄 Sync Now</button>
-              <button class="btn-secondary btn-sm" id="logout-btn" type="button">Sign Out</button>
             </div>
           </div>
         </div>
       </header>
       <div class="view-container">
         <section class="dashboard-view active" data-dashboard-view="overview">
-          <section class="dashboard-hero">
-            <div class="hero-copy">
-              <span class="hero-eyebrow">Reward Operations Dashboard</span>
-              <h2>Modern control center for accounts, search progress, balances, and daily follow-up.</h2>
-              <p>Track daily searches, reward balances, points, and loans for every account — synced across your
-                devices and available offline.</p>
-              <div class="hero-actions">
-                <button class="btn-primary" id="hero-add-account-btn">Create Account</button>
-                <button class="btn-secondary" type="button"
-                  onclick="document.querySelector('.overview-stats').scrollIntoView({behavior:'smooth'})">View
-                  Insights</button>
-              </div>
+          <!-- Single KPI strip. Previously these six numbers were split across a
+               marketing hero panel and a separate stat grid, so the same data
+               appeared twice under different names. -->
+          <div class="kpi-strip">
+            <div class="kpi">
+              <span class="kpi-label">Accounts</span>
+              <span class="kpi-value" id="stat-total">0</span>
             </div>
-            <div class="hero-panel">
-              <div class="hero-panel-head">
-                <span class="hero-panel-label">System Focus</span>
-                <span class="status-pill local" id="focus-mode-pill">Daily Review</span>
-              </div>
-              <div class="hero-highlight">
-                <strong id="hero-focus-title">Accounts ready to manage</strong>
-                <p id="hero-focus-text">Use filters, search, and progress indicators to move through your accounts
-                  faster.
-                </p>
-              </div>
-              <div class="hero-metrics">
-                <div>
-                  <span class="hero-metric-label">Pending Queue</span>
-                  <strong id="hero-pending-count">0</strong>
-                </div>
-                <div>
-                  <span class="hero-metric-label">With Balance</span>
-                  <strong id="hero-balance-count">0</strong>
-                </div>
-                <div>
-                  <span class="hero-metric-label">Loan Alerts</span>
-                  <strong id="hero-loan-count">0</strong>
-                </div>
-              </div>
+            <div class="kpi">
+              <span class="kpi-label">Done today</span>
+              <span class="kpi-value" id="stat-completed">0</span>
             </div>
-          </section>
+            <div class="kpi">
+              <span class="kpi-label">Pending</span>
+              <span class="kpi-value" id="hero-pending-count">0</span>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label" id="total-amount-card-label">Wallet balance</span>
+              <span class="kpi-value" id="total-amount-card-amount">0</span>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">Unused balance</span>
+              <span class="kpi-value" id="hero-balance-count">0</span>
+            </div>
+            <div class="kpi">
+              <span class="kpi-label">Loan alerts</span>
+              <span class="kpi-value" id="hero-loan-count">0</span>
+            </div>
+          </div>
 
-          <div class="overview-stats">
-            <div class="stat-box">
-              <span class="stat-label">Total Accounts</span>
-              <span id="stat-total" class="stat-value">0</span>
+          <!-- "What should I do next" bar, replacing the marketing hero. -->
+          <div class="focus-bar">
+            <div class="focus-bar-main">
+              <span class="focus-eyebrow">Next up</span>
+              <strong id="hero-focus-title">Accounts ready to manage</strong>
+              <p id="hero-focus-text">Create your first account to populate this dashboard.</p>
             </div>
-            <div class="stat-box">
-              <span class="stat-label">Daily Progress</span>
-              <span id="stat-completed" class="stat-value">0</span>
-            </div>
-            <div class="stat-box" id="total-amount-card">
-              <span class="stat-label" id="total-amount-card-label">Active Protocol</span>
-              <span id="total-amount-card-amount" class="stat-value">Standard</span>
+            <div class="focus-bar-side">
+              <span class="status-pill local" id="focus-mode-pill">Daily Review</span>
+              <button class="btn-primary btn-sm" id="hero-add-account-btn" type="button"><i
+                  class="fa-solid fa-plus"></i> New Account</button>
             </div>
           </div>
 
@@ -239,7 +238,6 @@
             <div class="accounts-section" id="home">
               <div class="section-header">
                 <div class="filter-btn-wrapper">
-                  <span class="toolbar-eyebrow">Your Accounts</span>
                   <button class="mobile-filter-toggle btn-ghost">
                     <i class="fa-solid fa-filter"></i> Filters
                   </button>
@@ -247,8 +245,7 @@
                 <div class="workspace-toolbar">
                   <div class="control-field search-field">
                     <label for="account-search-input">Search accounts</label>
-                    <input type="search" id="account-search-input"
-                      placeholder="Search by name, tag, subtitle, or query">
+                    <input type="search" id="account-search-input" placeholder="Search accounts…">
                     <span class="search-icon">Q Search</span>
                   </div>
                   <div class="control-field">
@@ -278,9 +275,6 @@
         <section class="dashboard-view" data-dashboard-view="rewards">
           <section class="hub-panel">
             <div class="section-header">
-              <div class="filter-btn-wrapper">
-                <span class="toolbar-eyebrow">Rewards Portfolio</span>
-              </div>
               <div class="workspace-toolbar">
                 <div class="control-field search-field">
                   <label for="reward-portfolio-search">Search rewards</label>
@@ -321,9 +315,6 @@
         <section class="dashboard-view" data-dashboard-view="loans">
           <section class="hub-panel">
             <div class="section-header">
-              <div class="filter-btn-wrapper">
-                <span class="toolbar-eyebrow">Loan Board</span>
-              </div>
               <div class="workspace-toolbar">
                 <div class="control-field search-field">
                   <label for="loan-board-search">Search loans</label>
@@ -371,9 +362,6 @@
         <section class="dashboard-view" data-dashboard-view="phones">
           <section class="hub-panel">
             <div class="section-header">
-              <div class="filter-btn-wrapper">
-                <span class="toolbar-eyebrow">Suspended Linked Phones</span>
-              </div>
               <div class="workspace-toolbar">
                 <div class="control-field search-field">
                   <label for="suspended-phone-search">Search phones</label>
@@ -399,11 +387,9 @@
         <section class="dashboard-view" data-dashboard-view="autoSearch">
           <div id="auto-search-view" class="auto-search-section">
             <div class="view-section">
+              <!-- The "Search Bot v2.0 / Automated Rewards Engine" banner
+                   restated the page header; only the live status remains. -->
               <div class="auto-header-pro">
-                <div>
-                  <h2 class="text-gradient"><i class="fa-solid fa-robot"></i> Search Bot <span>v2.0</span></h2>
-                  <p>Automated Rewards Engine</p>
-                </div>
                 <div class="status-badge-container">
                   <span id="auto-status-badge" class="status-badge idle">
                     <span class="status-dot"></span> <span id="auto-log-status">System Ready</span>
@@ -529,22 +515,12 @@
         </section>
         <section class="dashboard-view" data-dashboard-view="settings">
           <div class="settings-container">
-            <div class="settings-section-header settings-hero-header">
-              <div>
-                <span class="toolbar-eyebrow">Preferences</span>
-                <h2 style="margin-top:0">Global Settings</h2>
-                <p class="settings-hero-copy">Tune the dashboard for mobile comfort, cleaner cards, and faster daily
-                  work
-                  without changing your existing features.</p>
-              </div>
-              <button class="btn-icon-toggle" id="theme-toggle-btn-settings" data-theme-toggle>
-                <span class="icon-light">☀️</span>
-                <span class="icon-dark">🌙</span>
-              </button>
-            </div>
+            <!-- The page header already reads "Settings — Preferences,
+                 reminders, and backup", so the old eyebrow + H2 + marketing
+                 paragraph were a third restatement of the same thing. -->
             <div class="settings-card-grid">
               <div class="settings-section-emphasis">
-                <h3>✨ Interface Controls</h3>
+                <h3><i class="fa-solid fa-sliders"></i> Interface Controls</h3>
                 <div class="settings-stack">
                   <label class="settings-toggle">
                     <input type="checkbox" id="show-next-query-box-toggle">
@@ -561,7 +537,7 @@
                 </div>
               </div>
               <div class="settings-section">
-                <h3>📱 Startup Screen</h3>
+                <h3><i class="fa-solid fa-house"></i> Startup Screen</h3>
                 <div class="form-group">
                   <label for="startup-view-select">When the app opens, show</label>
                   <select id="startup-view-select">
@@ -578,26 +554,27 @@
             </div>
             <div class="settings-card-grid">
               <div class="settings-section" data-enter-scope>
-                <h3>⏰ Global Default Reminder</h3>
+                <h3><i class="fa-solid fa-clock"></i> Global Default Reminder</h3>
                 <div class="form-group">
                   <label>Default Time</label>
                   <input type="time" id="global-reminder-time">
                 </div>
                 <button class="btn-secondary" id="save-global-reminder-btn" data-enter-submit style="width:100%">Update
                   Global Time</button>
-                <button class="btn-secondary" id="enable-notifications-btn" style="width:100%; margin-top:8px">🔔
-                  Enable Notifications</button>
+                <button class="btn-secondary" id="enable-notifications-btn" style="width:100%; margin-top:8px"><i
+                    class="fa-solid fa-bell"></i> Enable Notifications</button>
                 <button class="btn-secondary" id="clear-reminders-btn" style="width:100%; margin-top:8px">Clear All
                   Reminders</button>
                 <div class="settings-inline-hint" style="margin-top:8px">Reminders only ring while the app is open in
                   your browser.</div>
               </div>
               <div class="settings-section">
-                <h3>🛡️ Data Backup</h3>
+                <h3><i class="fa-solid fa-shield-halved"></i> Data Backup</h3>
                 <div class="settings-action-grid">
-                  <button class="btn-secondary" onclick="exportToJSON()">📤 Export</button>
-                  <button class="btn-secondary" onclick="document.getElementById('import-input').click()">📥
-                    Import</button>
+                  <button class="btn-secondary" onclick="exportToJSON()"><i class="fa-solid fa-file-export"></i>
+                    Export</button>
+                  <button class="btn-secondary" onclick="document.getElementById('import-input').click()"><i
+                      class="fa-solid fa-file-import"></i> Import</button>
                 </div>
                 <input type="file" id="import-input" class="hidden" accept=".json" onchange="importFromJSON(event)">
               </div>
@@ -1167,11 +1144,34 @@
       document.querySelectorAll('[data-dashboard-view]').forEach(section => {
         section.classList.toggle('active', section.dataset.dashboardView === currentDashboardView);
       });
+      updatePageHeading(currentDashboardView);
+    }
+
+    // Header context: the section name lives in the header instead of a
+    // marketing hero, so the user always knows where they are.
+    const PAGE_META = {
+      overview: ["Overview", "Today at a glance"],
+      accounts: ["Accounts", "Daily search progress and balances"],
+      rewards: ["Rewards", "Reward cards across every account"],
+      loans: ["Loans", "Money lent and borrowed"],
+      phones: ["Phones", "Numbers linked to your accounts"],
+      autoSearch: ["Auto Search", "Run search batches automatically"],
+      settings: ["Settings", "Preferences, reminders, and backup"],
+    };
+
+    function updatePageHeading(view) {
+      const meta = PAGE_META[view];
+      if (!meta) return;
+      const titleEl = document.getElementById("page-title");
+      const subEl = document.getElementById("page-sub");
+      if (titleEl) titleEl.textContent = meta[0];
+      if (subEl) subEl.textContent = meta[1];
     }
 
     window.switchDashboardView = (view) => {
       currentDashboardView = view;
       updateDashboardView();
+      updatePageHeading(view);
       if (view === 'rewards') renderRewardsPortfolio();
       if (view === 'loans') renderLoansBoard();
       if (view === 'phones') renderSuspendedPhoneTracker();
@@ -1230,6 +1230,91 @@
     // tab's storage copy can't re-import them.
     const processedQueueKeys = new Set();
     const queueItemKey = (item) => `${item?.type}:${item?.id || ""}:${item?.ts || 0}`;
+
+    // ==========================================
+    // ACCOUNT-LEVEL DELETION TOMBSTONES (multi-device resurrection guard)
+    // deleteDoc() alone did NOT stop a deleted account from coming back: an
+    // offline edit on another device (or a device that never saw the delete)
+    // would recreate the doc via the "remote missing → setDoc" path. These
+    // tombstones make a delete AUTHORITATIVE and DETERMINISTIC: once an id is
+    // tombstoned, every create/update/merge/snapshot path drops it, no matter
+    // the timestamp. Tombstones ride the existing metadata sync so every
+    // device learns the deletion, and prune after 90 days (a device offline
+    // longer than that is the documented ceiling — same shape as item-level
+    // tombstones in acc.deleted). Re-creating an account yields a fresh
+    // acc_<timestamp> id, so a tombstone never blocks a legitimate new account.
+    // ==========================================
+    const deletedAccountsKey = "rewards_v8_deleted_accounts";
+    const ACCOUNT_TOMBSTONE_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+    let deletedAccounts = {};
+    try {
+      const rawTomb = localStorage.getItem(deletedAccountsKey);
+      const parsedTomb = rawTomb ? JSON.parse(rawTomb) : {};
+      if (parsedTomb && typeof parsedTomb === "object" && !Array.isArray(parsedTomb)) deletedAccounts = parsedTomb;
+    } catch { deletedAccounts = {}; }
+
+    function pruneAccountTombstones() {
+      const cutoff = Date.now() - ACCOUNT_TOMBSTONE_RETENTION_MS;
+      let changed = false;
+      Object.keys(deletedAccounts).forEach((id) => {
+        if (typeof deletedAccounts[id] !== "number" || deletedAccounts[id] < cutoff) {
+          delete deletedAccounts[id];
+          changed = true;
+        }
+      });
+      return changed;
+    }
+    function persistAccountTombstones() {
+      try { localStorage.setItem(deletedAccountsKey, JSON.stringify(deletedAccounts)); } catch { /* quota */ }
+    }
+    function isAccountDeleted(id) {
+      return !!id && Object.prototype.hasOwnProperty.call(deletedAccounts, id);
+    }
+    function recordAccountDeletion(id) {
+      if (!id) return;
+      deletedAccounts[id] = Date.now();
+      pruneAccountTombstones();
+      persistAccountTombstones();
+    }
+    // Union a remote tombstone map into the local one (keep the latest ts).
+    // Returns true if anything changed (so callers can re-render / clean up).
+    function mergeAccountTombstones(remoteMap) {
+      if (!remoteMap || typeof remoteMap !== "object" || Array.isArray(remoteMap)) return pruneAccountTombstones();
+      let changed = false;
+      Object.entries(remoteMap).forEach(([id, ts]) => {
+        if (typeof ts === "number" && /^[A-Za-z0-9_-]{1,120}$/.test(id) &&
+          (!deletedAccounts[id] || ts > deletedAccounts[id])) {
+          deletedAccounts[id] = ts;
+          changed = true;
+        }
+      });
+      if (pruneAccountTombstones()) changed = true;
+      if (changed) persistAccountTombstones();
+      return changed;
+    }
+    // Remove any tombstoned ids from the in-memory account map + order.
+    function purgeTombstonedAccountsLocally() {
+      let changed = false;
+      Object.keys(accountsData).forEach((id) => {
+        if (isAccountDeleted(id)) { delete accountsData[id]; changed = true; }
+      });
+      const before = accountOrder.length;
+      accountOrder = accountOrder.filter((id) => !isAccountDeleted(id));
+      if (accountOrder.length !== before) changed = true;
+      return changed;
+    }
+    pruneAccountTombstones();
+
+    // Cross-tab: a delete in another tab must reflect here too.
+    window.addEventListener("storage", (e) => {
+      if (e.key !== deletedAccountsKey || !e.newValue) return;
+      try {
+        const incoming = JSON.parse(e.newValue);
+        if (mergeAccountTombstones(incoming)) {
+          if (purgeTombstonedAccountsLocally()) { saveLocal(); render(); }
+        }
+      } catch { /* ignore malformed sibling writes */ }
+    });
 
     // Absorb queue items written by a sibling tab (storage events fire only
     // in OTHER tabs) — prevents one tab's saveLocal from erasing the other's
@@ -1388,6 +1473,20 @@
 
       // uuid fallback shape
       t("uuid() returns UUID shape", /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid()));
+
+      // Account-level deletion tombstones (multi-device resurrection guard).
+      // Uses throwaway ids and restores state so the real tombstone map is untouched.
+      const TOMB_ID = "__selftest_tomb__", REMOTE_TOMB_ID = "__selftest_remote_tomb__";
+      const hadTomb = isAccountDeleted(TOMB_ID), hadRemote = isAccountDeleted(REMOTE_TOMB_ID);
+      recordAccountDeletion(TOMB_ID);
+      t("recordAccountDeletion tombstones an id", isAccountDeleted(TOMB_ID));
+      const stripped = mergePendingQueueIntoRemoteData({ [TOMB_ID]: { name: "ghost", updatedAt: Date.now() } });
+      t("tombstoned account stripped from remote merge", !(TOMB_ID in stripped));
+      const remoteChanged = mergeAccountTombstones({ [REMOTE_TOMB_ID]: Date.now() });
+      t("mergeAccountTombstones unions remote deletions", remoteChanged && isAccountDeleted(REMOTE_TOMB_ID));
+      if (!hadTomb) delete deletedAccounts[TOMB_ID];
+      if (!hadRemote) delete deletedAccounts[REMOTE_TOMB_ID];
+      persistAccountTombstones();
 
       const failed = results.filter(r => !r.pass);
       console.table(results);
@@ -1630,6 +1729,8 @@
         }
       });
 
+      // Deleted accounts win over any remote copy or queued edit, always.
+      Object.keys(merged).forEach((id) => { if (isAccountDeleted(id)) delete merged[id]; });
       return merged;
     }
 
@@ -1826,11 +1927,19 @@
         try { localStorage.setItem(pendingQueueKey, JSON.stringify(pendingSyncQueue)); } catch { }
       }
 
+      // Enforce deletion tombstones on the freshly loaded local data — a
+      // tombstoned account must never re-appear after a reload.
+      pruneAccountTombstones();
+      const purgedOnLoad = purgeTombstonedAccountsLocally();
+
       // Validate and clean up any orphaned orders
       accountOrder = accountOrder.filter(id => accountsData.hasOwnProperty(id));
 
       window.accountsData = accountsData;
       window.accountOrder = accountOrder;
+
+      // Persist the purge so a tombstoned ghost can't linger in localStorage.
+      if (purgedOnLoad) saveLocal();
 
       normalizeExtendedAccountData();
       render();
@@ -1846,6 +1955,7 @@
         localStorage.setItem("rewards_v8_order", JSON.stringify(accountOrder));
         localStorage.setItem(pendingQueueKey, JSON.stringify(pendingSyncQueue));
         localStorage.setItem('rewards_activity_log', JSON.stringify(activityLog));
+        localStorage.setItem(deletedAccountsKey, JSON.stringify(deletedAccounts));
 
         // Storage-quota early warning (throttled to once per 5 minutes)
         const approxSize =
@@ -1873,6 +1983,12 @@
       // Validate action structure
       if ((action.type === 'update' || action.type === 'add') && !action.id) {
         recordSyncLog("ENQUEUE_INVALID_ACTION", { reason: "missing id for update/add" });
+        return;
+      }
+
+      // A tombstoned account must never be re-created by a queued edit.
+      if ((action.type === 'update' || action.type === 'add') && isAccountDeleted(action.id)) {
+        recordSyncLog("ENQUEUE_SKIP_TOMBSTONED", { accountId: action.id });
         return;
       }
 
@@ -1945,6 +2061,9 @@
               const metaOps = [];
               metaOps.push((batch) => batch.set(doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "sorting"), { order: item.data?.order || accountOrder, syncedAt: Date.now() }));
               metaOps.push((batch) => batch.set(doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "activity_log"), { logs: item.data?.activityLog || activityLog, syncedAt: Date.now() }));
+              // Account-deletion tombstones: always write the live map so every
+              // device converges on the same set of deleted account ids.
+              metaOps.push((batch) => batch.set(doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "deleted_accounts"), { ids: item.data?.deletedAccounts || deletedAccounts, syncedAt: Date.now() }));
               await commitInChunks(metaOps);
               recordSyncLog("SYNC_META_SUCCESS", {});
 
@@ -1960,10 +2079,19 @@
               recordSyncLog("SYNC_LEGACY_SNAPSHOT_CONVERTED", { accounts: Object.keys(snapData).length });
 
             } else if (item.type === "delete") {
+              recordAccountDeletion(item.id); // idempotent — guarantees a tombstone exists
               await deleteDoc(doc(db, "artifacts", appId, "users", currentUser.uid, "rewards_accounts", item.id));
               recordSyncLog("SYNC_DELETE_SUCCESS", { accountId: item.id });
 
             } else if (item.type === "update" || item.type === "add") {
+              // Never write an account that has been deleted (a stale offline
+              // edit reaching a device that already knows about the delete).
+              if (isAccountDeleted(item.id)) {
+                recordSyncLog("SYNC_SKIP_TOMBSTONED", { accountId: item.id });
+                pendingSyncQueue.shift();
+                saveLocal();
+                continue;
+              }
               const validated = validateAndSanitizeData(item.data);
               if (!validated) {
                 recordSyncLog("SYNC_VALIDATION_FAILED", { accountId: item.id, type: item.type });
@@ -2164,6 +2292,7 @@
       const colRef = collection(db, "artifacts", appId, "users", currentUser.uid, "rewards_accounts");
       const metaRef = doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "sorting");
       const logRef = doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "activity_log");
+      const deletedRef = doc(db, "artifacts", appId, "users", currentUser.uid, "metadata", "deleted_accounts");
 
       // Trailing-edge debounce: rapid snapshot bursts collapse into one apply of the LATEST data
       // (the old logic dropped events arriving within the window, leaving stale state).
@@ -2269,6 +2398,33 @@
         recordSyncLog("LOG_LISTENER_ERROR", { error: err.message });
       });
 
+      // How every device LEARNS about deletions made elsewhere. On any change:
+      // union the tombstones, purge matching accounts locally, and re-issue
+      // deletes for any that still exist remotely (cleans up a cross-device
+      // recreation). This is what closes the resurrection loop.
+      const unsubscribeDeleted = onSnapshot(deletedRef, (docSnap) => {
+        try {
+          if (!docSnap.exists()) return;
+          const changed = mergeAccountTombstones(docSnap.data().ids || {});
+          if (!changed) return;
+          const stillPresent = Object.keys(accountsData).filter((id) => isAccountDeleted(id));
+          const purged = purgeTombstonedAccountsLocally();
+          stillPresent.forEach((id) => {
+            if (!isPendingDeleteForAccount(id)) {
+              enqueueSyncAction({ type: "delete", id }, { deferSideEffects: true });
+            }
+          });
+          if (purged || stillPresent.length) saveLocal();
+          if (purged) render();
+          if (pendingSyncQueue.length > 0) syncPendingQueue();
+          recordSyncLog("DELETED_ACCOUNTS_SYNC", { total: Object.keys(deletedAccounts).length, purgedNow: stillPresent.length });
+        } catch (err) {
+          recordSyncError(err, { context: "deleted_accounts snapshot update" });
+        }
+      }, (err) => {
+        recordSyncLog("DELETED_LISTENER_ERROR", { error: err.message });
+      });
+
       const unsubscribeAccounts = onSnapshot(colRef, (snapshot) => {
         clearTimeout(accountSnapshotTimer);
         accountSnapshotTimer = setTimeout(() => {
@@ -2279,6 +2435,19 @@
             const validated = validateAndSanitizeData(data);
             if (validated) {
               newData[docSnap.id] = validated;
+            }
+          });
+
+          // A tombstoned account still present remotely means a device that had
+          // not yet learned the delete recreated it — drop it locally and
+          // re-issue the delete so it disappears everywhere. Converges once the
+          // deleted_accounts tombstone has propagated to all devices.
+          Object.keys(newData).forEach((id) => {
+            if (isAccountDeleted(id)) {
+              delete newData[id];
+              if (!isPendingDeleteForAccount(id)) {
+                enqueueSyncAction({ type: "delete", id }, { deferSideEffects: true });
+              }
             }
           });
 
@@ -2310,7 +2479,7 @@
         console.error("Account Sync Error", err);
       });
 
-      syncUnsubscribers = [unsubscribeMeta, unsubscribeLog, unsubscribeAccounts];
+      syncUnsubscribers = [unsubscribeMeta, unsubscribeLog, unsubscribeDeleted, unsubscribeAccounts];
     }
 
     function startSyncSafe() {
@@ -2701,37 +2870,51 @@
       });
 
       // 2. Build Standard Filters
-      let filtersHtml = [
-        { k: 'all', l: 'All' },
-        { k: 'active', l: 'Active' },
-        { k: 'suspended', l: 'Suspended' },
-        { k: 'pending', l: 'Pending' },
-        { k: 'done', l: 'Completed' },
-        { k: 'money', l: 'Unused Money' },
-        { k: 'loans', l: 'Has Loans' }
-      ].map(f => {
-        const countMap = {
-          all: stats.all,
-          active: stats.active,
-          suspended: stats.suspended,
-          pending: stats.pending,
-          done: stats.done,
-          money: stats.unusedMoney,
-          loans: stats.hasLoans
-        };
-        return `<button class="filter-btn ${currentFilter === f.k ? 'active' : ''}" onclick="window.setFilter('${f.k}')">
-                ${f.l} <span class="filter-count">${countMap[f.k] || 0}</span>
-             </button>`;
-      }).join('');
+      // Filters used to render as one undifferentiated wall of chips that mixed
+      // three unrelated ideas. They are now grouped and labelled: what state an
+      // account is in, what it flags, and which tag it carries.
+      const countMap = {
+        all: stats.all,
+        active: stats.active,
+        suspended: stats.suspended,
+        pending: stats.pending,
+        done: stats.done,
+        money: stats.unusedMoney,
+        loans: stats.hasLoans
+      };
+      const chip = (k, l) =>
+        `<button class="filter-btn ${currentFilter === k ? 'active' : ''}" onclick="window.setFilter('${k}')">
+           ${l} <span class="filter-count">${countMap[k] || 0}</span>
+         </button>`;
+
+      const filterGroup = (label, body) =>
+        body ? `<div class="filter-group"><span class="filter-group-label">${label}</span>
+                  <div class="filter-group-chips">${body}</div>
+                </div>` : '';
+
+      let filtersHtml = filterGroup('Status', [
+        ['all', 'All'],
+        ['active', 'Active'],
+        ['suspended', 'Suspended'],
+        ['pending', 'Pending'],
+        ['done', 'Completed']
+      ].map(([k, l]) => chip(k, l)).join(''));
+
+      filtersHtml += filterGroup('Flags', [
+        ['money', 'Unused Money'],
+        ['loans', 'Has Loans']
+      ].map(([k, l]) => chip(k, l)).join(''));
 
       // 3. Add Custom Tag Buttons
+      let tagChips = '';
       allTags.forEach(tag => {
         if (!tag) return;
         const count = Object.values(accountsData).filter(a => a.tags && a.tags.includes(tag)).length;
         const safeTagText = String(tag).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
         const tagEncoded = encodeURIComponent(tag);
-        filtersHtml += `<button class="filter-btn custom-tag ${currentFilter === tag ? 'active' : ''}" data-filter-tag="${tagEncoded}" >${safeTagText} <span class="filter-count">${count}</span></button>`;
+        tagChips += `<button class="filter-btn custom-tag ${currentFilter === tag ? 'active' : ''}" data-filter-tag="${tagEncoded}" >${safeTagText} <span class="filter-count">${count}</span></button>`;
       });
+      filtersHtml += filterGroup('Tags', tagChips);
 
       dashboard.innerHTML = filtersHtml;
       // Custom tag buttons are handled by ONE delegated document listener
@@ -2791,19 +2974,34 @@
         const balanceHtml = accBalance > 0
           ? `<div class="status-chip acc-balance">Balance ${accBalance}</div>`
           : '';
+        // Daily-progress strip — the app's core metric. Shown at every width:
+        // the card previously had no progress on desktop at all, because the
+        // markup that carried it was hardcoded `hidden`.
+        // The search buttons keep their original classes so the existing
+        // bind()/focus-restore logic continues to work untouched.
+        const searchDisabled = acc.suspended ? 'disabled' : '';
         const mobileSummaryHtml = `
-          <div class="account-mobile-summary">
-            <div class="summary-tile">
-              <span>Queries</span>
-              <strong>${qIdx}/${Math.max(totalQueries, 0)}</strong>
+          <div class="account-progress">
+            <div class="acc-stat">
+              <div class="acc-stat-top">
+                <span class="acc-stat-label">PC</span>
+                <span class="acc-stat-val">${acc.pc || 0}/${pcTarget}</span>
+                <button class="acc-run search-pc-btn" data-id="${id}" ${searchDisabled}
+                  title="Copy next query and open Bing (PC)" aria-label="Run PC search"><i class="fa-solid fa-display"></i></button>
+              </div>
+              <div class="acc-stat-bar"><i style="width:${pcP}%; background:var(--success)"></i></div>
             </div>
-            <div class="summary-tile">
-              <span>PC / Mobile</span>
-              <strong>${acc.pc || 0} / ${acc.mob || 0}</strong>
+            <div class="acc-stat">
+              <div class="acc-stat-top">
+                <span class="acc-stat-label">Mobile</span>
+                <span class="acc-stat-val">${acc.mob || 0}/${mobileTarget}</span>
+                <button class="acc-run search-mob-btn" data-id="${id}" ${searchDisabled}
+                  title="Copy next query and open Bing (Mobile)" aria-label="Run mobile search"><i class="fa-solid fa-mobile-screen-button"></i></button>
+              </div>
+              <div class="acc-stat-bar"><i style="width:${mobP}%; background:var(--info)"></i></div>
             </div>
-            <div class="summary-tile">
-              <span>Status</span>
-              <strong>${acc.suspended ? 'Paused' : isCompleted ? 'Done' : 'Live'}</strong>
+            <div class="acc-stat acc-stat-queries">
+              <div class="acc-stat-top"><span class="acc-stat-label">Queries</span><span class="acc-stat-val">${Math.max(totalQueries, 0)}</span></div>
             </div>
           </div>`;
         const tagsHtml = (acc.tags || [])
@@ -2837,7 +3035,6 @@
               <h3 class="account_title" data-action="open-account-details" data-id="${id}">${escapeHtml(acc.name)}</h3>
               <span class="acc-sub">${escapeHtml(acc.sub || "General Account")}</span>
               ${loansHtml}
-              ${mobileSummaryHtml}
             </div>
           </div>
           <div class="card-points-wraper">
@@ -2855,41 +3052,22 @@
         </div>
         <div class="account-chip-row">
           ${statusBadges}
-          ${balanceHtml}      
+          ${balanceHtml}
           ${tagsHtml ? `${tagsHtml}` : ''}
         </div>
+        ${mobileSummaryHtml}
         <div class="next-q-box next-q-box-show-hide" style="${acc.suspended ? 'opacity:0.5' : ''}">
           <div class="next-q-label">Next Query <span class="total-queries">(${totalQueries})</span></div>
           <div class="next-q-text"><span class="badge-count">${qIdx + 1}</span>"${escapeHtml(nextQ)}"</div>
         </div>
-        <div class="action-grid hidden" style="${acc.suspended ? 'pointer-events:none; opacity:0.5' : ''}">
-          <button class="btn-pc search-pc-btn" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>💻 PC Search</button>
-          <button class="btn-mob search-mob-btn" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>📱 Mobile</button>
-        </div>
-        <div class="progress-group hidden" style="${acc.suspended ? 'opacity:0.5' : ''}">
-          <div class="p-label"><span>PC Terminal</span><span>${acc.pc}/${pcTarget}</span></div>
-          <div class="p-row">
-            <button class="btn-adj adj-pc-minus" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>−</button>
-            <div class="p-track">
-              <div class="p-fill" style="width:${pcP}%; background: var(--success)"></div>
-            </div>
-            <button class="btn-adj adj-pc-plus" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>+</button>
-          </div>
-          <div class="p-label"><span>Mobile Hub</span><span>${acc.mob}/${mobileTarget}</span></div>
-          <div class="p-row">
-            <button class="btn-adj adj-mob-minus" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>−</button>
-            <div class="p-track">
-              <div class="p-fill" style="width:${mobP}%; background: var(--info)"></div>
-            </div>
-            <button class="btn-adj adj-mob-plus" data-id="${id}" ${acc.suspended ? 'disabled' : ''}>+</button>
-          </div>
-        </div>
-
         <div class="card-settings">
             <div class="card-settings-wraper">
               <div class="done-btn-wraper">
-                <button class="btn-done-toggle toggle-done-btn" data-id="${id}" data-val="${!isCompleted}">
-                  ${isCompleted ? "✅" : "🔃"}
+                <button class="btn-done-toggle toggle-done-btn" data-id="${id}" data-val="${!isCompleted}"
+                  aria-pressed="${isCompleted}" title="${isCompleted ? 'Mark as still in progress' : 'Mark this account done for today'}">
+                  ${isCompleted
+    ? '<i class="fa-solid fa-circle-check"></i> Completed'
+    : '<i class="fa-regular fa-circle"></i> Mark done'}
                 </button>
               </div>
             </div>
@@ -3328,11 +3506,14 @@
                 <button class="btn-secondary btn-sm" type="button" onclick="window.togglePortfolioAccountSelection('${accountId}')">Select All</button>
               </div>
             </div>
+            <!-- One inline line instead of four nested stat cards: the same four
+                 numbers already appear as big tiles at the top of the section,
+                 so repeating them as cards inside every account was noise. -->
             <div class="portfolio-stats">
-              <div><span>Total</span><strong>${rewardSummary.total}</strong></div>
-              <div><span>Available</span><strong>${rewardSummary.unused}</strong></div>
-              <div><span>Used</span><strong>${rewardSummary.used}</strong></div>
-              <div><span>Rows</span><strong>${items.length}</strong></div>
+              <span><i>Total</i><b>${rewardSummary.total}</b></span>
+              <span><i>Available</i><b>${rewardSummary.unused}</b></span>
+              <span><i>Used</i><b>${rewardSummary.used}</b></span>
+              <span><i>Cards</i><b>${items.length}</b></span>
             </div>
             <div class="portfolio-inline-list">
               ${items.sort((a, b) => new Date(b.date) - new Date(a.date)).map((item) => {
@@ -3343,15 +3524,21 @@
                     <label class="portfolio-check">
                       <input type="checkbox" ${selected ? 'checked' : ''} onchange="window.togglePortfolioRewardSelect('${item.key}')">
                     </label>
-                    <button class="portfolio-code" type="button" data-action="copy-text" data-copy-text="${escapeHtml(item.code)}">${escapeHtml(item.code)}</button>
-                    <span>${item.amount}</span>
-                    <span>${balance}</span>
-                    <span>${escapeHtml(item.date || "")}</span>
-                    <span>${escapeHtml(item.phone || "No phone")}</span>
-                    <span class="status-badge ${item.status}">${escapeHtml(item.status)}</span>
-                    <div class="portfolio-row-actions">
-                      <button class="btn-secondary btn-sm" type="button" onclick="window.togglePortfolioRewardStatus('${item.accountId}', '${item.id}')">${item.status === 'used' ? 'Mark Unused' : 'Mark Used'}</button>
-                      <button class="btn-secondary btn-sm" type="button" onclick="window.deletePortfolioReward('${item.accountId}', '${item.id}')">Delete</button>
+                    <div class="pir-body">
+                      <div class="pir-head">
+                        <button class="portfolio-code" type="button" data-action="copy-text" data-copy-text="${escapeHtml(item.code)}">${escapeHtml(item.code)}</button>
+                        <span class="status-badge ${item.status}">${escapeHtml((item.status || '').replace('-', ' '))}</span>
+                      </div>
+                      <div class="pir-meta">
+                        <div><span class="pir-lbl">Amount</span><span class="pir-v">${item.amount}</span></div>
+                        <div><span class="pir-lbl">Balance</span><span class="pir-v">${balance}</span></div>
+                        <div><span class="pir-lbl">Date</span><span class="pir-v">${escapeHtml(item.date || "—")}</span></div>
+                        <div><span class="pir-lbl">Phone</span><span class="pir-v">${escapeHtml(item.phone || "—")}</span></div>
+                      </div>
+                      <div class="portfolio-row-actions">
+                        <button class="btn-secondary btn-sm" type="button" onclick="window.togglePortfolioRewardStatus('${item.accountId}', '${item.id}')">${item.status === 'used' ? 'Mark Unused' : 'Mark Used'}</button>
+                        <button class="btn-secondary btn-sm" type="button" onclick="window.deletePortfolioReward('${item.accountId}', '${item.id}')">Delete</button>
+                      </div>
                     </div>
                   </div>
                 `;
@@ -3689,7 +3876,7 @@
           <div class="portfolio-item-head">
             <div>
               <h4>${escapeHtml(loan.ownerName)}</h4>
-              <p>${loan.direction === 'lent' ? 'This account given loan' : 'This account taken loan'}</p>
+              <p>${loan.direction === 'lent' ? 'Lent by this account' : 'Borrowed by this account'}</p>
             </div>
             <div class="loan-board-actions">
               <button class="btn-secondary btn-sm" data-action="open-single-loan" data-loan-id="${loan.id}">Manage</button>
@@ -3703,7 +3890,7 @@
             <div><span>Remaining</span><strong>${remaining}</strong></div>
             <div><span>Started</span><strong>${formatLoanDate(loan.startDate)}</strong></div>
             <div><span>Due</span><strong>${formatLoanDate(loan.dueDate)}</strong></div>
-            <div><span>Status</span><strong>${loan.status}${loan.isOverdue ? ' / Overdue' : ''}</strong></div>
+            <div><span>Status</span><strong class="loan-state-value">${loan.status}${loan.isOverdue ? ' / Overdue' : ''}</strong></div>
           </div>
         </article>
         `;
@@ -3871,10 +4058,8 @@
       // NOTE: no ".delete-btn" bind here — that selector also matched the
       // ledger row delete buttons and hijacked them into deleteAccount(undefined).
       bind(".toggle-done-btn", (d) => window.toggleField(d.id, "done", d.val === "true"));
-      bind(".adj-pc-plus", (d) => window.adjustScore(d.id, "pc", 1));
-      bind(".adj-pc-minus", (d) => window.adjustScore(d.id, "pc", -1));
-      bind(".adj-mob-plus", (d) => window.adjustScore(d.id, "mob", 1));
-      bind(".adj-mob-minus", (d) => window.adjustScore(d.id, "mob", -1));
+      // The +/- adjust controls were removed from the card; window.adjustScore
+      // stays exposed for the console and any future entry point.
       bind(".search-pc-btn", (d) => {
         lastSearchId = d.id;
         lastSearchType = 'pc';
@@ -4230,6 +4415,9 @@
         order: accountOrder,
         data: exportData,
         activityLog,
+        // Carry deletion tombstones so restoring on a fresh device doesn't
+        // resurrect accounts that were deleted before the backup was taken.
+        deletedAccounts,
         // NOTE: pendingSyncQueue intentionally NOT exported — import ignores
         // it anyway (replaying stale queued ops could overwrite newer data)
         lastSyncTime: lastSuccessfulSyncTime
@@ -4291,11 +4479,21 @@
             }
           });
 
+          // Tombstones: honor what the backup deleted, but let the RESTORED
+          // accounts win (the user explicitly brought those ids back), and
+          // tombstone anything this import drops so it can't resurrect either.
+          if (imported.deletedAccounts && typeof imported.deletedAccounts === "object") {
+            mergeAccountTombstones(imported.deletedAccounts);
+          }
+          Object.keys(validatedData).forEach((id) => { delete deletedAccounts[id]; });
+
           // Atomic-ish import: apply locally FIRST, then deliver to the cloud
           // through the conflict-checked queue (per-account updates + deletes,
           // deduped and retried). The old direct-batch path could die
           // mid-import and leave remote in a mixed old/new state.
           const removedIds = accountOrder.filter(id => !validatedData[id]);
+          removedIds.forEach(id => recordAccountDeletion(id));
+          persistAccountTombstones();
           accountsData = validatedData;
           accountOrder = validatedOrder;
           if (importedActivityLog.length) activityLog = importedActivityLog;
@@ -4320,6 +4518,7 @@
       if (id && accountsData[id]) {
         const acc = accountsData[id];
         document.getElementById("modal-title").innerText = "Update Account";
+        document.getElementById("save-account-btn").innerText = "Save Changes";
         document.getElementById("edit-name").value = accountsData[id].name;
         document.getElementById("edit-sub").value = accountsData[id].sub || "";
         // NEW: Load Tags
@@ -4344,6 +4543,7 @@
 
       } else {
         document.getElementById("modal-title").innerText = "Add New Account";
+        document.getElementById("save-account-btn").innerText = "Create Account";
         document.getElementById("edit-name").value = "";
         document.getElementById("edit-sub").value = "";
         document.getElementById("edit-tags").value = "";
@@ -4947,9 +5147,13 @@
       // (retries + error handling) deliver the remote delete. The old online
       // path was a raw fire-and-forget deleteDoc — a network blip silently
       // lost the delete and threw an unhandled rejection.
+      recordAccountDeletion(id);
       delete accountsData[id];
       accountOrder = accountOrder.filter(oid => oid !== id);
       enqueueSyncAction({ type: "delete", id });
+      // Propagate the tombstone to every device through the metadata channel so
+      // an offline edit elsewhere can never resurrect this account.
+      enqueueSyncAction({ type: "meta", data: { order: accountOrder, activityLog, deletedAccounts } });
       render();
       window.logActivity(`Deleted account: ${name}`);
     };
@@ -6417,9 +6621,10 @@
 
 
     if ("serviceWorker" in navigator) {
+      // Registered silently — a success toast on every single page load was
+      // pure noise. Failures are still logged for diagnostics.
       navigator.serviceWorker.register("sw.js")
-        .then(() => window.showToast("Service Worker Registered", "success"))
-        .catch(err => console.log("SW error", err));
+        .catch(err => console.warn("SW registration failed", err));
     }
 
     // (Manual offline mode removed — the app follows real network state only.)

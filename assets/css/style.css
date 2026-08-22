@@ -12,9 +12,23 @@
   --info: #06b6d4;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --radius-lg: 20px;
+  /* Radius scale (design system) */
+  --radius-sm: 8px;
   --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  /* Elevation scale */
+  --shadow-sm: 0 2px 10px -6px rgba(15, 23, 42, 0.18);
+  --shadow-md: 0 12px 30px -18px rgba(15, 23, 42, 0.22);
   --shadow: 0 18px 40px -24px rgb(15 23 42 / 0.28);
+  --shadow-lg: 0 24px 60px -30px rgba(15, 23, 42, 0.30);
+  /* Accessible focus ring + motion */
+  --focus-ring: rgba(15, 118, 110, 0.45);
+  --focus-ring-soft: rgba(15, 118, 110, 0.12);
+  --speed-fast: 0.15s;
+  --speed: 0.24s;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.dark {
@@ -24,7 +38,12 @@ body.dark {
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border: rgba(148, 163, 184, 0.18);
+  --shadow-sm: 0 2px 12px -6px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 14px 34px -20px rgba(0, 0, 0, 0.7);
   --shadow: 0 20px 50px -30px rgb(0 0 0 / 0.8);
+  --shadow-lg: 0 26px 64px -30px rgba(0, 0, 0, 0.85);
+  --focus-ring: rgba(45, 212, 191, 0.55);
+  --focus-ring-soft: rgba(45, 212, 191, 0.18);
   /* Body keeps a hardcoded light gradient by default — override it here */
   background: radial-gradient(circle at top left, rgba(45, 212, 191, 0.08), transparent 25%),
     radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.06), transparent 20%),
@@ -33,6 +52,20 @@ body.dark {
 
 * {
   box-sizing: border-box;
+}
+
+/* One consistent, accessible keyboard-focus ring across the whole app.
+   Only shows for keyboard/AT users (:focus-visible), never on mouse click,
+   so it adds accessibility without changing the visual feel for pointer users. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+/* Elements that render their own focus treatment opt out of the global ring. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
 }
 
 body {
@@ -182,7 +215,10 @@ body {
   right: 0;
   bottom: 0;
   z-index: 10000;
-  padding: 12px 12px 12px;
+  /* Clear the home indicator on notched devices (iPhone X+ / gesture-nav) */
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(12px + env(safe-area-inset-left, 0px));
+  padding-right: calc(12px + env(safe-area-inset-right, 0px));
   gap: 6px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
@@ -292,18 +328,17 @@ body {
 }
 
 
-
 /* Header */
 .header {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 10px 16px;
   background: var(--card-bg);
   backdrop-filter: blur(12px);
-  border-radius: 24px;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
   /* Keep the header (and the user-menu dropdown inside it) above page content */
   position: relative;
@@ -314,13 +349,16 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  min-width: 0;
 }
 
 
@@ -339,7 +377,6 @@ body {
 .content-area.flwidth .sidebartoggle .toggleicon {
   rotate: 180deg;
 }
-
 
 
 /* ===== User profile menu (avatar trigger + dropdown) ===== */
@@ -451,25 +488,195 @@ body {
   font-weight: 500;
 }
 
-/* Stats Area */
-.overview-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
-  margin-top: 30px;
+/* ==========================================================================
+   Header chrome
+   The header used to hold only a stray "Website" link and two emoji buttons,
+   so the app never told you which section you were in. It now carries the
+   page identity on the left and real icon actions on the right.
+   ========================================================================== */
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
+.page-heading h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.page-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Square icon button — the shared shape for every header/toolbar icon action.
+   Replaces the old emoji-in-a-circle buttons. */
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--speed-fast) var(--ease), color var(--speed-fast) var(--ease),
+    border-color var(--speed-fast) var(--ease);
+}
+
+.icon-btn:hover {
+  background: var(--surface);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Overview: KPI strip + focus bar
+   ========================================================================== */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.kpi {
+  background: var(--card-bg);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.kpi-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.focus-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.focus-bar-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.focus-eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.focus-bar-main strong {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.focus-bar-main p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.focus-bar-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Six columns only survive on a wide screen — below that the labels truncate
+   ("TOTAL WALL…"), so step down instead of squeezing. */
+@media (max-width: 1100px) {
+  .kpi-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kpi {
+    padding: 10px 12px;
+  }
+
+  .kpi-value {
+    font-size: 1.25rem;
+  }
+}
+
+/* Stats Area */
 .stat-box {
   background: var(--card-bg);
-  padding: 24px;
-  border-radius: var(--radius-lg);
+  padding: 16px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-label {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -485,10 +692,12 @@ body {
 
 /* Section Header */
 
+/* Was a hardcoded #f1f1f1, which stayed light-grey in dark mode. The panel is
+   just a grouping wrapper, so it no longer paints its own background. */
 .workspace-panel,
 .hub-panel {
-  padding: 25px;
-  background: #f1f1f1;
+  padding: 0;
+  background: transparent;
 }
 
 /* Shared toolbar layout — used by Accounts, Rewards, Loans, Phones sections
@@ -497,15 +706,26 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .workspace-toolbar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Search takes the slack so sort + primary action stay on the same line
+   instead of wrapping the button to its own row. */
+.workspace-toolbar .search-field {
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 320px;
 }
 
 .control-field {
@@ -534,13 +754,22 @@ body {
 
 .control-field input,
 .control-field select {
-  min-height: 48px;
-  padding: 12px 16px;
-  border-radius: 14px;
+  min-height: 40px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text-main);
   font: inherit;
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+}
+
+.control-field input:focus,
+.control-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus-ring-soft);
+  outline: none;
 }
 
 /* Grid */
@@ -677,74 +906,6 @@ body.is-card-dragging .accounts-grid {
   text-overflow: ellipsis;
 }
 
-.action-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.btn-pc:focus,
-.btn-mob:focus {
-  outline: 4px solid var(--primary-light);
-  outline-offset: 2px;
-  transform: scale(0.98);
-}
-
-.p-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text-muted);
-}
-
-.p-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.p-track {
-  flex: 1;
-  height: 10px;
-  background: var(--border);
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.p-fill {
-  height: 100%;
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-adj {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  font-size: 0.9rem;
-  color: var(--text-main);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-adj:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.btn-adj:active {
-  transform: scale(0.9);
-}
-
 .context-menu {
   position: fixed;
   background: white;
@@ -872,7 +1033,8 @@ body.is-card-dragging .accounts-grid {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
@@ -884,12 +1046,29 @@ body.is-card-dragging .accounts-grid {
   transition: border-color 0.2s;
 }
 
+/* Native selects render with the OS chrome (Arial, square grey border, white
+   background) unless they are reset — which broke dark mode. Draw our own
+   chevron so they match the themed inputs above. */
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 16px;
+}
+
 .form-group textarea {
   height: 130px;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus-ring-soft);
   outline: none;
 }
 
@@ -937,9 +1116,9 @@ button {
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   padding: 12px 24px;
-  box-shadow: 0 18px 45px rgba(15, 118, 110, 0.18);
+  box-shadow: 0 14px 30px -12px rgba(15, 118, 110, 0.45);
 }
 
 .btn-primary:hover {
@@ -950,14 +1129,23 @@ button {
 .btn-secondary {
   background: var(--border);
   color: var(--text-main);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 8px 16px;
+}
+
+.btn-secondary:hover {
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary-dark);
+}
+
+body.dark .btn-secondary:hover {
+  color: var(--primary-light);
 }
 
 .btn-danger {
   background: var(--danger);
   color: white;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 8px 16px;
 }
 
@@ -970,43 +1158,51 @@ button {
   color: var(--text-muted);
   font-size: 0.85rem;
   padding: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .btn-ghost:hover {
   color: var(--primary);
-  background: rgba(99, 102, 241, 0.05);
-  border-radius: 8px;
+  /* Was an off-brand indigo tint (99,102,241); now matches the teal brand. */
+  background: rgba(15, 118, 110, 0.08);
 }
 
-.btn-pc {
-  background: #10b981;
-  color: white;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  padding: 12px;
+/* Card footer: a subtle divider sets the toggle apart from the content
+   (was a lone unlabelled emoji button floating in the bottom-left corner). */
+.card-settings {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
 }
 
-.btn-mob {
-  background: #06b6d4;
-  color: white;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  padding: 12px;
+.card-settings-wraper,
+.done-btn-wraper {
+  display: flex;
 }
 
 .btn-done-toggle {
   background: var(--border);
   color: var(--text-muted);
-  border-radius: 12px;
-  grid-column: span 2;
-  padding: 10px;
+  border-radius: var(--radius-pill);
+  padding: 9px 16px;
   font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.btn-done-toggle:hover {
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857;
 }
 
 .is-done .btn-done-toggle {
-  background: #dcfce7;
+  background: rgba(16, 185, 129, 0.16);
   color: #166534;
   font-weight: 800;
+}
+
+body.dark .btn-done-toggle:hover,
+body.dark .is-done .btn-done-toggle {
+  color: #6ee7b7;
 }
 
 .btn-sm {
@@ -1073,23 +1269,30 @@ body:not(.dark) .icon-dark {
   margin-bottom: 12px;
 }
 
-.settings-hero-header {
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.settings-hero-copy {
-  margin: 8px 0 0;
-  color: var(--text-muted);
-  max-width: 580px;
-}
-
+/* auto-fit instead of a fixed 2-up: two 190px columns on a 390px phone left
+   every heading wrapping mid-word ("Interface / Controls"). */
 .settings-card-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* The emphasis card is not a .settings-section, so its heading used to skip
+   the shared h3 treatment and rendered twice the size of its neighbours. */
+.settings-section h3,
+.settings-section-emphasis h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.settings-section h3 i,
+.settings-section-emphasis h3 i {
+  color: var(--primary);
+  margin-right: 6px;
 }
 
 .settings-section-emphasis {
@@ -1113,8 +1316,93 @@ body:not(.dark) .icon-dark {
   color: var(--text-muted);
 }
 
-.account-mobile-summary {
-  display: none;
+/* Compact daily-progress strip on account cards (mobile only) */
+/* Shown at every width — this strip is the only place the card reports the
+   day's search progress, and the only entry point for running a search. */
+.account-progress {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.account-progress .acc-stat {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-progress .acc-stat-queries {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.account-progress .acc-stat-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.account-progress .acc-stat-val {
+  margin-left: auto;
+}
+
+/* Run-search action, sized to sit inline with the progress label row. */
+.acc-run {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background var(--speed-fast) var(--ease), color var(--speed-fast) var(--ease),
+    border-color var(--speed-fast) var(--ease);
+}
+
+.acc-run:hover:not(:disabled) {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.acc-run:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.account-progress .acc-stat-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.account-progress .acc-stat-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.account-progress .acc-stat-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.account-progress .acc-stat-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* "Show account tags" setting — hides ONLY the tag pills on cards.
@@ -1142,6 +1430,22 @@ body.reduced-motion *::after {
   background: var(--bg);
   font-size: 0.88rem;
   color: var(--text-main);
+  cursor: pointer;
+}
+
+.settings-toggle:hover {
+  border-color: var(--primary);
+}
+
+/* 13px native checkboxes are below every touch-target guideline and ignore the
+   brand colour — scale them up and tint them. */
+.settings-toggle input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
 
 /* ---------- Account Details UI ---------- */
@@ -1223,12 +1527,12 @@ body.reduced-motion *::after {
 
 .full-details-title .full-details-close-account i {
   font-size: 20px;
-  color: #6366f1;
+  color: var(--primary);
 }
 
 .full-details-title .account-h2 {
   margin: 0;
-  color: #6366f1;
+  color: var(--primary);
 }
 
 .full-details-title .full-details-close-reward {
@@ -1345,7 +1649,8 @@ span.redeem-date {
 
   .content-area {
     width: 100%;
-    padding-bottom: 100px;
+    /* Clear the fixed bottom nav, plus the home-indicator inset it now adds. */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
   }
 
   .filter-btn-wrapper {
@@ -1371,11 +1676,7 @@ span.redeem-date {
     display: flex !important;
   }
 
-  .overview-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .accounts-grid {
+    .accounts-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1449,15 +1750,48 @@ span.redeem-date {
 }
 
 /* --- Filter Dashboard Styles --- */
+/* --- Filter dashboard (single definition; this used to be declared three
+   separate times, each overriding the last) ------------------------------- */
 .filter-dashboard {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: 8px 20px;
+  margin-bottom: 12px;
   background: var(--card-bg);
-  padding: 15px;
+  padding: 10px 12px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
+  width: 100%;
+}
+
+/* Grouped filters: status / flags / tags are three different ideas and now
+   read as three labelled clusters instead of one undifferentiated chip wall. */
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.filter-group-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.filter-group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filter-group + .filter-group {
+  border-left: 1px solid var(--border);
+  padding-left: 20px;
 }
 
 /* --- Balance & Query Badges --- */
@@ -1496,8 +1830,8 @@ span.redeem-date {
 /* --- 1. Toast Notification Styles (Professional Alerts) --- */
 #toast-container {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  right: calc(24px + env(safe-area-inset-right, 0px));
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -1643,7 +1977,7 @@ span.redeem-date {
   font-family: 'Courier New', monospace;
   font-weight: 700;
   color: var(--primary);
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(15, 118, 110, 0.1);
   padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
@@ -1653,7 +1987,7 @@ span.redeem-date {
 
 .code-cell:hover {
   border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(15, 118, 110, 0.15);
 }
 
 .money-cell {
@@ -1692,71 +2026,57 @@ span.redeem-date {
 }
 
 /* --- Segmented Filter Bar (Professional Look) --- */
-.filter-dashboard {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.84);
-  padding: 10px;
-  border-radius: 20px;
-  gap: 10px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-  overflow-x: auto;
-  width: 100%;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-}
-
 .filter-btn {
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
   color: var(--text-muted);
-  font-weight: 700;
-  font-size: 0.85rem;
+  font-weight: 600;
+  font-size: 0.78rem;
   box-shadow: none;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
+  min-height: 30px;
 }
 
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
+  border-color: var(--primary);
   color: var(--text-main);
 }
 
 .filter-btn.active {
-  background: var(--card-bg);
-  color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
 }
 
 .filter-count {
   background: rgba(0, 0, 0, 0.1);
-  color: var(--text-muted);
-  margin-left: 8px;
-  font-size: 0.7rem;
-  min-width: 20px;
-  height: 18px;
-  border-radius: 10px;
+  color: inherit;
+  margin-left: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 16px;
+  border-radius: var(--radius-pill);
   display: inline-flex;
   justify-content: center;
   align-items: center;
 }
 
 .filter-btn.active .filter-count {
-  background: var(--primary);
-  color: white;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
 }
 
 /* Custom Tag Buttons */
 .filter-btn.custom-tag {
   border: 1px dashed var(--primary);
   color: var(--primary);
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(15, 118, 110, 0.05);
   margin-left: 0;
 }
 
@@ -1919,18 +2239,19 @@ span.redeem-date {
 .input-wrapper input {
   width: 100%;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg);
   font-weight: 700;
   color: var(--text-main);
-  transition: all 0.2s;
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
 }
 
 .input-wrapper input:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  /* Was off-brand indigo (99,102,241); now the teal brand focus ring. */
+  box-shadow: 0 0 0 3px var(--focus-ring-soft);
 }
 
 
@@ -2015,11 +2336,11 @@ span.redeem-date {
   padding: 15px;
   font-size: 1.1rem;
   gap: 10px;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
 }
 
 .cmd-btn.start:hover {
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
   transform: translateY(-2px);
 }
 
@@ -2076,13 +2397,10 @@ span.redeem-date {
   overflow: hidden;
 }
 
+/* Oversized watermark glyphs read as smudges behind the numbers rather than
+   decoration. The tiles are labelled, so the icons add nothing. */
 .mini-stat-card .icon-bg {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  font-size: 3rem;
-  opacity: 0.05;
-  color: var(--text-main);
+  display: none;
 }
 
 .mini-stat-card .lbl {
@@ -2140,96 +2458,84 @@ span.redeem-date {
   font-weight: 600;
 }
 
+/* Activity log — restyled from a dark "hacker terminal" to the app's light
+   card language (theme-var based, so dark mode follows automatically). */
 .terminal-card {
-  background: #1e293b;
-  color: #e2e8f0;
-  border: none;
+  background: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 0;
   display: flex;
   flex-direction: column;
   height: 320px;
+  overflow: hidden;
 }
 
 .terminal-header {
-  background: #0f172a;
-  padding: 12px 20px;
+  background: var(--surface);
+  color: var(--text-main);
+  padding: 12px 18px;
   font-size: 0.85rem;
   font-weight: 700;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--border);
 }
 
+/* Mac-style traffic-light dots removed (they were the main "terminal" tell) */
 .term-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.term-dots .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.dot.red {
-  background: #ef4444;
-}
-
-.dot.yellow {
-  background: #f59e0b;
-}
-
-.dot.green {
-  background: #10b981;
+  display: none;
 }
 
 .terminal-window {
   flex: 1;
-  padding: 15px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 0.82rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  background: var(--bg);
 }
 
 .log-entry {
-  padding-left: 10px;
-  border-left: 2px solid #334155;
+  padding: 7px 10px;
+  border-left: 3px solid var(--border);
+  border-radius: 0 8px 8px 0;
+  background: var(--card-bg);
   line-height: 1.4;
-  opacity: 0.8;
+  color: var(--text-main);
 }
 
 .log-entry.system {
-  color: #94a3b8;
+  color: var(--text-muted);
   border-color: transparent;
-  font-style: italic;
+  background: transparent;
+  font-style: normal;
 }
 
 .log-time {
-  color: #64748b;
+  color: var(--text-muted);
   margin-right: 8px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
 }
 
 .log-success {
-  border-left-color: #10b981;
-  color: #a7f3d0;
-  opacity: 1;
+  border-left-color: var(--success);
 }
 
 .log-error {
-  border-left-color: #ef4444;
-  color: #fca5a5;
-  opacity: 1;
+  border-left-color: var(--danger);
 }
 
 .current-term-display {
-  background: #0f172a;
-  padding: 12px 20px;
-  border-top: 1px solid #334155;
+  background: var(--surface);
+  color: var(--text-main);
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
   font-size: 0.85rem;
   display: flex;
   gap: 10px;
@@ -2237,15 +2543,16 @@ span.redeem-date {
 }
 
 .term-label {
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.7rem;
 }
 
 .term-text {
-  color: #38bdf8;
-  font-family: monospace;
+  color: var(--primary);
+  font-family: "Courier New", monospace;
+  font-weight: 700;
 }
 
 /* Status Badge */
@@ -2594,34 +2901,64 @@ body.running .status-badge {
 }
 
 @media (max-width: 768px) {
+  /* Ledger row = clean 2-line flex card on mobile. (The old grid referenced a
+     .details-wrapper element that the template never produced, so the money /
+     status / phone cells scattered.) */
   .ledger-row {
-    grid-template-columns: 30px 1fr 40px;
-    grid-template-areas: "chk code menu" "chk details details";
-    gap: 5px;
-  }
-
-  .checkbox-wrapper {
-    grid-area: chk;
-    opacity: 1;
-  }
-
-  /* Always show check on mobile */
-  .code-cell-wrapper {
-    grid-area: code;
-  }
-
-  .action-menu-wrapper {
-    grid-area: menu;
-    opacity: 1;
-  }
-
-  .details-wrapper {
-    grid-area: details;
-    font-size: 0.8rem;
-    color: var(--text-muted);
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 12px 14px;
+    row-gap: 8px;
+  }
+
+  .ledger-row .checkbox-wrapper {
+    order: 1;
+    opacity: 1;
+    width: auto;
+  }
+
+  .ledger-row .code-cell-wrapper {
+    order: 2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ledger-row .status-cell-wrapper {
+    order: 3;
+  }
+
+  .ledger-row .action-menu-wrapper {
+    order: 4;
+    opacity: 1;
+  }
+
+  /* Second line: amount / balance / phone across the full width */
+  .ledger-row .money-cell-wrapper {
+    order: 5;
+    flex-basis: 100%;
+    display: flex;
+    align-items: baseline;
     gap: 10px;
     flex-wrap: wrap;
+    padding-left: 32px;
+  }
+
+  .ledger-row .phone-cell-wrapper {
+    order: 6;
+    flex-basis: 100%;
+    padding-left: 32px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .ledger-row .phone-cell-wrapper:empty {
+    display: none;
+  }
+
+  .balance-label {
+    font-size: 0.78rem;
   }
 
   .desktop-only {
@@ -2873,28 +3210,11 @@ body.dark .loan-card.is-overdue {
   color: #fff;
 }
 
-.dashboard-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
-  gap: 24px;
-  position: relative;
-  overflow: hidden;
-}
 
-.hero-copy h2 {
-  font-size: clamp(2rem, 3.6vw, 3.4rem);
-  line-height: 1.05;
-  margin: 10px 0 14px;
-  max-width: 12ch;
-}
-
-.hero-copy p,
 .panel-caption {
   color: var(--text-muted);
   margin: 0;
 }
-
-.hero-eyebrow,
 .toolbar-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -2909,54 +3229,20 @@ body.dark .loan-card.is-overdue {
   letter-spacing: 0.08em;
 }
 
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
-
-.hero-panel {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
-}
-
-body.dark .hero-panel {
-  background: rgba(9, 17, 24, 0.84);
-}
-
-.hero-panel {
-  border-radius: 24px;
-  padding: 24px;
-  display: grid;
-  gap: 18px;
-}
-
-.hero-panel-head,
+/* Title and caption read as one unit. They used to sit at opposite ends of the
+   panel, so the caption looked like an unrelated right-aligned label. */
 .panel-head {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 2px;
 }
 
-.hero-panel-label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
+.panel-head .panel-caption {
+  font-size: 0.78rem;
 }
 
-.hero-highlight {
-  padding: 18px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(6, 182, 212, 0.08));
-  border: 1px solid rgba(15, 118, 110, 0.12);
-}
 
-.hero-highlight strong,
 .insight-item strong {
   display: block;
   font-size: 1rem;
@@ -2985,37 +3271,26 @@ body.dark .hero-panel {
   transform: translateY(1px);
 }
 
-.hero-highlight p {
-  color: var(--text-muted);
-  margin: 8px 0 0;
-}
 
-.hero-metrics,
 .insight-list {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
-.hero-metrics {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.hero-metrics div,
 .summary-tile,
 .insight-item {
-  padding: 14px 16px;
-  border-radius: 18px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
 }
 
-.hero-metric-label,
 .summary-tile span,
 .insight-item span {
   display: block;
   color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-bottom: 6px;
+  font-size: 0.74rem;
+  margin-bottom: 3px;
 }
 
 .hub-panel {
@@ -3025,21 +3300,46 @@ body.dark .hero-panel {
 
 .insights-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  gap: 12px;
   align-items: start;
 }
 
 .charts-container {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 12px;
 }
 
+/* Same visual language as the Overview KPI strip so section summaries read
+   consistently across the app. */
 .portfolio-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.portfolio-summary-grid .summary-tile {
+  border: none;
+  border-radius: 0;
+  background: var(--card-bg);
+  padding: 10px 12px;
+}
+
+.portfolio-summary-grid .summary-tile strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .portfolio-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .portfolio-filter-group,
@@ -3089,18 +3389,16 @@ body.dark .hero-panel {
 }
 
 .portfolio-item {
-  padding: 18px;
-  border-radius: 20px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
   background: var(--card-bg);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s ease;
 }
 
 .portfolio-item:hover {
-  transform: translateY(-2px);
-  border-color: rgba(15, 118, 110, 0.2);
-  box-shadow: 0 24px 48px -34px rgb(15 23 42 / 0.45);
+  border-color: rgba(15, 118, 110, 0.25);
 }
 
 .portfolio-item-head {
@@ -3108,7 +3406,7 @@ body.dark .hero-panel {
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .portfolio-item-head h4 {
@@ -3122,28 +3420,38 @@ body.dark .hero-panel {
   font-size: 0.85rem;
 }
 
-.portfolio-stats,
-.loan-detail-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+/* .loan-detail-grid is defined once, further down, next to the loan board
+   styles it belongs with. A second declaration used to sit here and was
+   silently overridden. */
+
+/* Per-account reward totals: one quiet inline row, not four nested cards. */
+.portfolio-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 6px 0 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
 
-.portfolio-stats div,
-.loan-detail-grid div {
-  padding: 12px;
-  border-radius: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+.portfolio-stats span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
-.portfolio-stats span,
-.loan-detail-grid span {
-  display: block;
-  font-size: 0.74rem;
+.portfolio-stats i {
+  font-style: normal;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
-  margin-bottom: 6px;
+}
+
+.portfolio-stats b {
+  font-size: 0.92rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .modal-header-actions {
@@ -3232,15 +3540,64 @@ body.dark .hero-panel {
   gap: 8px;
 }
 
+/* Reward row = compact labeled card (works on mobile + desktop; replaced an
+   8-column table that stacked into unlabeled bare values on phones) */
 .portfolio-inline-row {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1.6fr) 90px 90px 110px minmax(0, 1fr) 110px minmax(0, 1.2fr);
+  display: flex;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: 14px;
   background: rgba(15, 23, 42, 0.04);
   font-size: 0.84rem;
+  align-items: flex-start;
+}
+
+.pir-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pir-head {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 80px let three columns squeeze onto a phone, which truncated dates and
+   phone numbers. 105px gives two readable columns instead. */
+.pir-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  gap: 8px 14px;
+}
+
+.pir-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pir-lbl {
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.pir-v {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .portfolio-inline-row.selected {
@@ -3253,6 +3610,14 @@ body.dark .hero-panel {
   justify-content: center;
 }
 
+.portfolio-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
 .portfolio-code {
   background: transparent;
   justify-content: flex-start;
@@ -3262,6 +3627,11 @@ body.dark .hero-panel {
   font-size: 0.82rem;
   font-weight: 700;
   text-align: left;
+}
+
+/* --primary-dark is near-black teal — unreadable on the dark surface. */
+body.dark .portfolio-code {
+  color: var(--primary-light);
 }
 
 .portfolio-row-actions {
@@ -3335,8 +3705,8 @@ body.dark .loan-board-item.is-overdue {
 }
 
 .chart-shell {
-  height: 240px;
-  margin-top: 14px;
+  height: 190px;
+  margin-top: 10px;
   position: relative;
 }
 
@@ -3344,16 +3714,16 @@ body.dark .loan-board-item.is-overdue {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 10px;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
 .account {
-  padding: 22px;
+  padding: 14px 16px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 252, 251, 0.82));
   border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 22px 40px -30px rgb(15 23 42 / 0.42);
+  box-shadow: var(--shadow-sm);
 }
 
 body.dark .account {
@@ -3448,24 +3818,11 @@ body.dark .account.is-done {
   padding: 12px 14px;
 }
 
-.action-grid {
-  margin-top: 16px;
-  margin-bottom: 18px;
-}
 
-.btn-pc,
-.btn-mob,
 .btn-done-toggle {
   min-height: 46px;
 }
 
-.filter-dashboard {
-  background: rgba(15, 23, 42, 0.06);
-}
-
-.filter-btn.custom-tag {
-  margin-left: 0;
-}
 
 .app-footer .footer-note {
   margin-top: 18px;
@@ -3473,8 +3830,8 @@ body.dark .account.is-done {
 
 .backtotop-btn {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  right: calc(20px + env(safe-area-inset-right, 0px));
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -3499,8 +3856,6 @@ body.dark .account.is-done {
   pointer-events: none;
 }
 @media (max-width: 1024px) {
-
-  .dashboard-hero,
   .insights-grid,
   .charts-container {
     grid-template-columns: 1fr;
@@ -3583,19 +3938,11 @@ body.dark .account.is-done {
     font-size: 0.92rem;
   }
 
-  .action-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .hero-copy h2 {
-    max-width: none;
-  }
-
-  .hero-metrics,
+  /* Compact 2-up KPI/stat cards on phones instead of a tall full-width stack
+     (four full-width tiles wasted a whole screen of vertical space). */
   .portfolio-summary-grid,
-  .portfolio-stats,
   .loan-detail-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .control-field,
@@ -3603,15 +3950,89 @@ body.dark .account.is-done {
     width: 100%;
   }
 
+  /* Section headers: stack the title and its right-side caption so the caption
+     wraps below instead of being clipped off the right edge on narrow screens. */
+  .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
 
-  .portfolio-item-head,
-  .portfolio-inline-row {
-    grid-template-columns: 1fr;
+  /* Header: title left, icon actions right, all on one line. They used to wrap
+     onto a second row and eat a whole strip of the screen. */
+  .header {
+    flex-wrap: nowrap;
+  }
+
+  .main-header {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .header-actions {
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .page-heading h2 {
+    font-size: 1.02rem;
+  }
+
+  /* Toolbar: search takes the full first row, the controls share the second. */
+  .section-header {
+    flex-wrap: wrap;
+  }
+
+  .workspace-toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .workspace-toolbar .search-field {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .workspace-toolbar .control-field:not(.search-field) {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  .filter-btn-wrapper {
+    order: -1;
+  }
+
+  /* Board card headers: let the action buttons drop below the title and fill
+     the row instead of overflowing off-screen (e.g. loan "Delete" was clipped). */
+  .portfolio-item-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Compact rows (e.g. Phones list) stay horizontal so the status badge hugs
+     its content on the right instead of stretching full-width. */
+  .portfolio-item.compact .portfolio-item-head {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .portfolio-item.compact .portfolio-item-head .status-chip {
+    align-self: center;
+    flex: 0 0 auto;
+  }
+
+  .loan-board-actions,
+  .portfolio-item-actions {
+    flex-wrap: wrap;
+  }
+
+  .loan-board-actions button {
+    flex: 1 1 auto;
   }
 
   .portfolio-filter-group,
   .portfolio-bulk-actions,
-  .portfolio-row-actions,
   .points-action-row {
     width: 100%;
   }
@@ -3649,12 +4070,6 @@ body.dark .account.is-done {
     width: 100%;
   }
 
-  .section-header {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .hero-eyebrow,
   .toolbar-eyebrow {
     padding: 3px 8px;
     font-size: 0.6rem;
@@ -3753,7 +4168,6 @@ body.dark .account.is-done {
 }
 
 
-
 @media (max-width: 500px) {
   .app-shell {
     padding: 0px;
@@ -3801,11 +4215,7 @@ body.dark .account.is-done {
   }
 
 
-  .account .progress-group {
-    display: none;
-  }
-
-  .filter-dashboard {
+    .filter-dashboard {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
@@ -3815,17 +4225,22 @@ body.dark .account.is-done {
     font-size: 0.8rem;
   }
 
+  /* Single-column, full-width cards on phones. A 2-up grid squeezed each
+     content-rich card into ~160px (chips wrapped one-per-line, header stacked
+     awkwardly). Full-width rows are the premium mobile pattern (Todoist /
+     Linear / Revolut) — far more scannable, and lets the header go horizontal. */
   .accounts-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .account {
     width: 100%;
-    padding: 14px;
-    border-radius: 18px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
     gap: 12px;
+    justify-content: flex-start;
   }
 
   .account .card-top .title_sub-handle .account_title {
@@ -3840,33 +4255,20 @@ body.dark .account.is-done {
     display: flex;
   }
 
-  .account .action-grid {
-    display: grid;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    gap: 8px;
-  }
-
-  .account .action-grid button {
-    padding: 5px;
-    font-size: 12px;
-    min-height: 35px;
-    width: 100%;
-  }
-
-  .account .action-grid button.btn-mob {
-    display: inline-flex;
-  }
-
+        /* Full-width card → header goes horizontal again: title/subtitle on the left,
+     points + menu on the right (matches the desktop hierarchy). */
   .card-top {
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .card-points-wraper {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    width: auto;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 6px;
   }
   .backtotop-btn {
     bottom: 65px;
@@ -3926,40 +4328,57 @@ body.dark .account.is-done {
 ========================= */
 .loan-detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
   margin-top: 10px;
 }
 
 .loan-detail-grid div {
-  padding: 10px;
-  border-radius: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
   transition: 0.2s;
+}
+
+.loan-detail-grid span {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.loan-detail-grid strong {
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .loan-detail-grid div:hover {
   background: var(--card-bg);
 }
 
-.loan-board-item.taken.open strong {
+/* Loan state is carried by the card's left border and its status chip. Tinting
+   every value as well left the whole grid coloured, which flattened the
+   hierarchy — only the status value keeps the state colour now. */
+.loan-board-item.taken.open .loan-state-value {
   color: var(--warning);
 }
 
-.loan-board-item.taken.close strong {
+.loan-board-item.taken.close .loan-state-value {
   color: var(--success);
 }
 
-.loan-board-item.given.open strong {
+.loan-board-item.given.open .loan-state-value {
   color: var(--info);
 }
 
-.loan-board-item.given.close strong {
+.loan-board-item.given.close .loan-state-value {
   color: var(--primary);
 }
 
-.loan-board-item.is-overdue strong {
+.loan-board-item.is-overdue .loan-state-value {
   color: var(--danger);
 }
 
@@ -4031,4 +4450,70 @@ body.dark .account.is-done {
   margin-left: 4px;
   font-size: 0.8rem;
   padding: 4px 8px;
+}
+
+/* ==========================================================================
+   Touch targets (mobile)
+   Audited at 390px: header icons were 27x28, toolbar fields 35px, small
+   buttons 31px and the bottom-nav tabs 36px — all under the 40px minimum
+   that makes one-handed tapping reliable. Sizes below stay visually compact
+   while giving every control a real finger-sized hit area.
+   ========================================================================== */
+@media (max-width: 768px) {
+  .control-field input,
+  .control-field select {
+    min-height: 40px;
+  }
+
+  .add-account-btn {
+    width: 44px;
+    height: 40px;
+  }
+
+  .btn-sm {
+    min-height: 36px;
+  }
+
+  .card-menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-filter-toggle {
+    min-height: 40px;
+  }
+
+  .settings-section .btn-secondary,
+  .settings-action-grid .btn-secondary {
+    min-height: 42px;
+  }
+
+  .mobile-bottom-nav {
+    padding: 8px 12px;
+  }
+
+  .mobile-bottom-nav .dashboard-tab {
+    min-height: 44px;
+  }
+
+  .mobile-filter-close {
+    min-width: 38px;
+    min-height: 38px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header-left .btn-ghost {
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.card-points-wraper {
+  display: flex;
+}
+.account .card-top {
+  align-items: center;
 }

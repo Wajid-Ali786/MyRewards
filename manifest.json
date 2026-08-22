@@ -1,7 +1,9 @@
 {
   "name": "MyRewards",
   "short_name": "Rewards",
-  "start_url": "/MyRewards/index.html",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#0f766e",
